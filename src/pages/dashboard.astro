@@ -1,0 +1,70 @@
+---
+import Layout from "../layouts/Layout.astro"
+import { RecordService } from "../lib/models/record"
+import type { User } from "../lib/models/types/types"
+import { supabase } from "../lib/supabase"
+import type { Record } from './../lib/models/types/types';
+
+
+const { cookies, redirect } = Astro
+
+const accessToken = cookies.get("sb-access-token")
+const refreshToken = cookies.get("sb-refresh-token")
+const userCookie = cookies.get("user")
+
+if (!accessToken || !refreshToken) {
+    return redirect("/signin")
+}
+
+const user: User = userCookie ? JSON.parse(userCookie.value) : null
+if (!user) {
+    cookies.delete("sb-access-token", { path: "/" })
+    cookies.delete("sb-refresh-token", { path: "/" })
+    return redirect("/signin")
+}
+
+let session
+try {
+    session = await supabase.auth.setSession({
+        refresh_token: refreshToken.value,
+        access_token: accessToken.value,
+    })
+    if (session.error) {
+        cookies.delete("sb-access-token", { path: "/" })
+        cookies.delete("sb-refresh-token", { path: "/" })
+        cookies.delete("user", { path: "/" })
+        return redirect("/signin")
+    }
+} catch (error) {
+    cookies.delete("sb-access-token", { path: "/" })
+    cookies.delete("sb-refresh-token", { path: "/" })
+    cookies.delete("user", { path: "/" })
+    return redirect("/signin")
+}
+const recordService = new RecordService();
+
+const email = session.data.user?.email
+const userId = session.data.user?.id;
+
+const records: Record[] = userId ? await recordService.getUserRecords(userId) : [];
+---
+<Layout title="Dashboard">
+    <div id="container">
+        <div class="">
+            <h1>Bienvenido {email}</h1>
+            <p>Tu nombre de usuario es: {user.username}</p>
+            <h2>Tus discos</h2>
+            <ul>
+                {records.map((record) => (
+                    <li>
+                        <p>{record.artist}</p>
+                        <p>{record.title}</p>
+                    </li>
+                ))}
+            </ul>
+            <form action="/api/auth/signout">
+                <button type="submit">Sign out</button>
+            </form>
+        </div>
+    </div>
+</Layout>

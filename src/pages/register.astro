@@ -1,0 +1,27 @@
+---
+import Button from "../components/Button.astro";
+import Layout from "../layouts/Layout.astro";
+
+const { cookies, redirect } = Astro;
+
+const accessToken = cookies.get("sb-access-token");
+const refreshToken = cookies.get("sb-refresh-token");
+
+if (accessToken && refreshToken) {
+    return redirect("/")
+}
+---
+
+<Layout title="Registrarse">
+  	<h1>Registrarse</h1>
+  	<p>Ya tienes una cuenta? <a href="/signin">Iniciar sesion</a></p>
+  	<form action="/api/auth/register" method="post">
+  	  	<label for="email">Email</label>
+  	  	<input type="email" name="email" id="email" />
+		<label for="username">Username</label>
+  	  	<input type="text" name="username" id="username" />
+  	  	<label for="password">Password</label>
+  	  	<input type="password" name="password" id="password" />
+  	  	<Button text="Registrarse"/>
+  	</form>
+</Layout>
