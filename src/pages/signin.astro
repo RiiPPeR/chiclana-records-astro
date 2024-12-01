@@ -1,11 +1,12 @@
 ---
-import Button from "../components/Button.astro";
-import Layout from "../layouts/Layout.astro";
+import Button from "../components/Button.astro"
+import Layout from "../layouts/Layout.astro"
 
-const { cookies, redirect } = Astro;
+const { cookies, redirect } = Astro
+const error = Astro.url.searchParams.get('error');
 
-const accessToken = cookies.get("sb-access-token");
-const refreshToken = cookies.get("sb-refresh-token");
+const accessToken = cookies.get("sb-access-token")
+const refreshToken = cookies.get("sb-refresh-token")
 
 if (accessToken && refreshToken) {
     return redirect("/dashboard")
@@ -13,14 +14,43 @@ if (accessToken && refreshToken) {
 ---
 
 <Layout title="Iniciar sesion">
-    <h1>Iniciar sesion</h1>
-    <p>Nuevo? <a href="/register">Crear una cuenta</a></p>
-    <form action="/api/auth/signin" method="post" class="flex flex-col">
-        <label for="email">Email</label>
-        <input type="email" name="email" id="email" class="text-black"/>
-        <label for="password">Password</label>
-        <input type="password" name="password" id="password" class="text-black"/>
-        
-        <Button text="Iniciar sesion"/>
-    </form>
+    <div
+        class="max-w-md mx-auto relative overflow-hidden z-10 bg-black bg-transparent backdrop-blur-md bg-opacity-30 p-8 rounded-lg shadow-xl before:w-24 before:h-24 before:absolute before:bg-purple-600 before:rounded-full before:-z-10 before:blur-2xl after:w-32 after:h-32 after:absolute after:bg-sky-400 after:rounded-full after:-z-10 after:blur-xl after:top-24 after:-right-12"
+    >
+        <div class="absolute w-28 h-28 bg-pink-500 rounded-full -z-10 blur-xl opacity-50 -bottom-10 -left-0"></div>
+
+        <h2 class="text-2xl font-bold text-yellow-500 mb-6">Iniciar sesión</h2>
+
+        <form method="post" action="/api/auth/signin">
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-300" for="email"
+                >Email</label>
+                <input
+                    class="mt-1 p-2 w-full bg-white bg-transparent backdrop-blur-md bg-opacity-10  rounded-md text-white"
+                    type="email" name="email" id="email"
+                />
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-300" for="password"
+                >Contraseña</label>
+                <input
+                    class="mt-1 p-2 w-full bg-white bg-transparent backdrop-blur-md bg-opacity-10  rounded-md text-white"
+                    name="password" id="password" type="password"
+                />
+            </div>
+
+            <div class="flex justify-center">
+                <Button text="Iniciar sesión"/>
+            </div>
+        </form>
+
+        <div class="error-message justify-center text-red-400" style={`display: ${error ? 'flex' : 'none'}`}>
+            {error}
+        </div>
+
+        <p class="text-center mt-4 text-gray-300">
+            ¿No tienes una cuenta? <a href="/register" class="text-sky-400 hover:underline">Regístrate</a>
+        </p>
+    </div>
 </Layout>

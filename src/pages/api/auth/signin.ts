@@ -9,7 +9,7 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
     const password = formData.get("password")?.toString()
 
     if (!email || !password) {
-        return new Response("Email and password are required", { status: 400 })
+        return redirect(`/signin?error=${encodeURIComponent("Debes rellenar todos los campos")}`)
     }
 
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -18,7 +18,7 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
     })
 
     if (error) {
-        return new Response(error.message, { status: 500 })
+        return redirect(`/signin?error=${encodeURIComponent(error.message)}`)
     }
 
     const { data: userData, error: userError } = await supabase

@@ -1,0 +1,34 @@
+---
+const { cookies, redirect } = Astro
+import logo from '../assets/logo.png'
+
+const accessToken = cookies.get("sb-access-token")
+const refreshToken = cookies.get("sb-refresh-token")
+
+const isLoggedIn = accessToken && refreshToken
+---
+<header class="h-[10%] mb-10 flex justify-center">
+    <nav class="flex flex-row items-center bg-black bg-transparent backdrop-blur-md bg-opacity-30 h-20 w-auto mt-6 p-7 rounded-lg shadow-xl">
+        <img src={logo.src} alt="Logo de la pagina." class="h-14 mr-5">
+        <p class="mr-10 text-3xl text-yellow-500">Chiclana records</p>
+        <ul class="flex flex-row space-x-10">
+            <li>
+                <a href="/">Inicio</a>
+            </li>
+            {isLoggedIn ? (
+                <li>
+                    <a href="/dashboard">Mi cuenta</a>
+                </li>
+            ) : (
+                <>
+                    <li>
+                        <a href="/signin">Iniciar sesion</a>
+                    </li>
+                    <li>
+                        <a href="/register">Registrarse</a>
+                    </li>
+                </>
+            )}
+        </ul>
+    </nav>
+</header>

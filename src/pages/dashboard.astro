@@ -5,7 +5,6 @@ import type { User } from "../lib/models/types/types"
 import { supabase } from "../lib/supabase"
 import type { Record } from './../lib/models/types/types';
 
-
 const { cookies, redirect } = Astro
 
 const accessToken = cookies.get("sb-access-token")
@@ -54,14 +53,24 @@ const records: Record[] = userId ? await recordService.getUserRecords(userId) : 
             <h1>Bienvenido {email}</h1>
             <p>Tu nombre de usuario es: {user.username}</p>
             <h2>Tus discos</h2>
-            <ul>
-                {records.map((record) => (
-                    <li>
-                        <p>{record.artist}</p>
-                        <p>{record.title}</p>
-                    </li>
+            <div class="flex flex-row flex-wrap gap-10 mr-24 ml-24">
+                {records.map((record: Record) => (
+                    <div class="flex-[1_1_500px] flex flex-row max-w-md mx-auto relative overflow-hidden z-10 bg-black bg-transparent backdrop-blur-md bg-opacity-30 p-4 rounded-lg shadow-xl transition-transform duration-300 hover:scale-105 cursor-pointer">
+                        <div class="absolute w-24 h-24 bg-yellow-500 bg-opacity-50 rounded-full -z-10 blur-2xl top-20 right-0" />
+                        <img src={record.image_url} alt="Imagel del disco" class="h-24 w-24" />
+                        <div class="p-3 w-2/5">
+                            <p>{record.artist}</p>
+                            <p>{record.title}</p>
+                            <p>{record.year}</p>
+                        </div>
+                        <div class="p-3 w-2/5">
+                            <p>{record.label}</p>
+                            <p>{record.catno}</p>
+                            <p>{record.country}</p>
+                        </div>
+                    </div>
                 ))}
-            </ul>
+            </div>
             <form action="/api/auth/signout">
                 <button type="submit">Sign out</button>
             </form>

@@ -6,6 +6,9 @@
     <filter id="blur2">
       <feGaussianBlur stdDeviation="25" />
     </filter>
+    <filter id="blur3">
+      <feGaussianBlur stdDeviation="22" />
+    </filter>
   </defs>
   <path 
     fill="url(#a)" 
@@ -14,6 +17,14 @@
     clip-rule="evenodd" 
     style="opacity:.25"
     filter="url(#blur1)"
+  />
+  <path 
+    fill="url(#c)" 
+    fill-rule="evenodd"
+    d="M800 300c100-80 250-50 350-20 150 45 280 150 250 300-30 150-200 200-300 300-83.33 83.33-150 200-300 150-150-50-150-200-250-300-100-100-300-100-300-250 0-150 200-150 350-200 75-25 150 50 200 20Z"
+    clip-rule="evenodd" 
+    style="opacity:.25"
+    filter="url(#blur3)"
   />
   <path 
     fill="url(#b)" 
@@ -25,16 +36,21 @@
   />
   <defs>
     <linearGradient id="a" x1="107.37" x2="1130.66" y1="1993.35" y2="1026.31" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#0A1128"/>
-      <stop offset="0.3" stop-color="#4B0082"/>
-      <stop offset="0.6" stop-color="#800080"/>
-      <stop offset="1" stop-color="#9400D3"/>
+      <stop offset="0" stop-color="#0000FF"/>
+      <stop offset="0.3" stop-color="#4169E1"/>
+      <stop offset="0.6" stop-color="#1E90FF"/>
+      <stop offset="1" stop-color="#87CEEB"/>
     </linearGradient>
     <linearGradient id="b" x1="373" x2="1995.44" y1="1100" y2="118.03" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#1A0B2E"/>
       <stop offset="0.4" stop-color="#800080"/>
       <stop offset="0.7" stop-color="#4B0082"/>
       <stop offset="1" stop-color="#9932CC"/>
+    </linearGradient>
+    <linearGradient id="c" x1="400" x2="1200" y1="800" y2="100" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#4169E1"/>
+      <stop offset="0.5" stop-color="#8A2BE2"/>
+      <stop offset="1" stop-color="#800080"/>
     </linearGradient>
   </defs>
 </svg>
