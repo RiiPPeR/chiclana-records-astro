@@ -2,8 +2,10 @@ TODO: README.md
 
 Chiclana Records version web usando la misma base de datos que en la version de escritorio.
 
-![image](https://github.com/user-attachments/assets/41f7f3d8-e834-4bd0-921a-f24c58296dc6)
+![image](https://github.com/user-attachments/assets/fef38205-1fa0-4c9a-a982-1b9918a8b2b6)
 
-![image](https://github.com/user-attachments/assets/e0035180-df00-4d02-ae35-1c07330713af)
+![image](https://github.com/user-attachments/assets/c8d50857-ef7d-4d7b-b0ff-f5b2abdf0a2c)
 
-![image](https://github.com/user-attachments/assets/eb5a5e7f-e9e0-42a0-b1bd-e3d1c12ef19a)
+![image](https://github.com/user-attachments/assets/c536c4f0-6f66-42bd-9444-981d1eadf0a0)
+
+![image](https://github.com/user-attachments/assets/e3d622c5-f225-4f3d-a156-626f88297c59)
