@@ -98,13 +98,13 @@ if (Astro.request.method === 'POST') {
         </div>
 
         <div class="w-full">
-            <form method="POST" class="mb-8">
-                <div class="flex gap-4">
+            <form method="POST" class="mb-8 flex flex-row justify-center">
+                <div class="flex xl:flex-row flex-col w-5/6 xl:w-2/4t">
                     <input 
                         type="text" 
                         name="query" 
                         placeholder="Buscar un disco..." 
-                        class="flex-1 p-3 bg-black/40 backdrop-blur-md text-white rounded-lg border border-gray-600 focus:border-yellow-500 focus:outline-none"
+                        class="flex-1 p-3 bg-black/40 backdrop-blur-md text-white rounded-lg border border-gray-600 focus:border-yellow-500 focus:outline-none xl:mr-10 mb-5 xl:mb-0"
                         required
                     />
                     <OrbButton 
@@ -143,16 +143,14 @@ if (Astro.request.method === 'POST') {
                             alt={record.title}
                             class="w-32 h-32 object-cover mb-4 rounded-lg"
                             />
-                            <div class="flex flex-col justify-between text-gray-400 text-sm mb-4">
-                                <span>{record.year}</span>
-                                <span>{record.country}</span>
-                                <span>{record.label[0]}</span>
-                                <span>{record.catno}</span>
+                            <div class="flex flex-col justify-center text-gray-300 text-base m-4">
+                                <p>{record.year}, {record.country}</p>
+                                <p>{record.label[0]} - {record.catno}</p>
                             </div>
                         </div>
             
                         <div class="p-4">
-                            <h2 class="font-bold text-xl text-yellow-500 mb-2">{record.artist}</h2>
+                            <p class="font-bold text-2xl text-yellow-500 mb-2">{record.artist}</p>
                             <p class="text-gray-300 mb-2">{record.title.split(' - ')[1]}</p>
             
                             {record.isInCollection ? (
@@ -163,7 +161,6 @@ if (Astro.request.method === 'POST') {
                                         primaryColor="#facc15" 
                                         secondaryColor="#ef4444"
                                     />
-                                    
                                 </form>
                             ) : (
                                 <form action="/api/records/add" method="POST">
