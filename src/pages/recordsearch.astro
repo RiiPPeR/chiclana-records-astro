@@ -117,11 +117,10 @@ if (Astro.request.method === 'POST') {
 
             {error && <p class="text-red-500 mb-4 text-center">{error}</p>}
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 w-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-auto">
                 {searchResults.map((record) => (
-
-                    <div class="flex-[1_1_500px] flex flex-col max-w-md relative overflow-hidden z-10 bg-black/40 backdrop-blur-md p-4 rounded-xl shadow-black shadow-2xl transition-all duration-300 hover:scale-105">
-        
+                    <div class="w-3/4 flex flex-col max-w-md m-10 relative overflow-hidden z-10 bg-black/40 backdrop-blur-md p-4 rounded-xl shadow-black shadow-2xl transition-shadow duration-300 hover:shadow-none will-change-transform">
+                
                         {(() => {
                             const match = records.find((r) => r.discogs_id === record.id)
                             if (match) {
@@ -131,7 +130,7 @@ if (Astro.request.method === 'POST') {
                             record.isInCollection = false
                             return null
                         })()}
-
+            
                         {record.isInCollection ? (
                             <div class="absolute w-36 h-36 bg-yellow-500 bg-opacity-50 rounded-full -z-10 blur-2xl top-20 right-0" />
                         ) : (
@@ -151,38 +150,39 @@ if (Astro.request.method === 'POST') {
                                 <span>{record.catno}</span>
                             </div>
                         </div>
-
+            
                         <div class="p-4">
                             <h2 class="font-bold text-xl text-yellow-500 mb-2">{record.artist}</h2>
                             <p class="text-gray-300 mb-2">{record.title.split(' - ')[1]}</p>
-
-                                {record.isInCollection ? (
-                                    <form action="/api/records/remove" method="POST">
-                                        <input type="hidden" name="discogs_id" value={record.id} />
-                                        <OrbButton 
-                                            text="Eliminar" 
-                                            primaryColor="#facc15" 
-                                            secondaryColor="#ef4444"
-                                        />
-                                    </form>
-                                ) : (
-                                    <form action="/api/records/add" method="POST">
-                                                <input type="hidden" name="discogs_id" value={record.id} />
-                                                <input type="hidden" name="title" value={record.title} />
-                                                <input type="hidden" name="artist" value={record.artist} />
-                                                <input type="hidden" name="image_url" value={record.thumb} />
-                                                <input type="hidden" name="country" value={record.country} />
-                                                <input type="hidden" name="year" value={record.year} />
-                                                <input type="hidden" name="label" value={record.label[0]} />
-                                                <input type="hidden" name="catno" value={record.catno} />
-                                                <input type="hidden" name="searchQuery" value={urlQuery || ''} />
-                                        <OrbButton 
-                                            text="Añadir" 
-                                            primaryColor="#ef4444" 
-                                            secondaryColor="#22c55e"
-                                        />
-                                    </form>
-                                )}
+            
+                            {record.isInCollection ? (
+                                <form action="/api/records/remove" method="POST">
+                                    <input type="hidden" name="discogs_id" value={record.id} />
+                                    <OrbButton 
+                                        text="Eliminar" 
+                                        primaryColor="#facc15" 
+                                        secondaryColor="#ef4444"
+                                    />
+                                    
+                                </form>
+                            ) : (
+                                <form action="/api/records/add" method="POST">
+                                    <input type="hidden" name="discogs_id" value={record.id} />
+                                    <input type="hidden" name="title" value={record.title} />
+                                    <input type="hidden" name="artist" value={record.artist} />
+                                    <input type="hidden" name="image_url" value={record.thumb} />
+                                    <input type="hidden" name="country" value={record.country} />
+                                    <input type="hidden" name="year" value={record.year} />
+                                    <input type="hidden" name="label" value={record.label[0]} />
+                                    <input type="hidden" name="catno" value={record.catno} />
+                                    <input type="hidden" name="searchQuery" value={urlQuery || ''} />
+                                    <OrbButton 
+                                        text="Añadir" 
+                                        primaryColor="#ef4444"
+                                        secondaryColor="#22c55e"
+                                    />
+                                </form>
+                            )}
                         </div>
                     </div>
                 ))}
