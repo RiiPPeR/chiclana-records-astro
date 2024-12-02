@@ -1,0 +1,22 @@
+{
+    "version": 2,
+    "builds": [
+      {
+        "src": "src/pages/api/**/*.ts",
+        "use": "@vercel/node",
+        "config": {
+          "runtime": "nodejs18.x"
+        }
+      },
+      {
+        "src": "astro.config.mjs",
+        "use": "@astrojs/vercel/serverless"
+      }
+    ],
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "/src/pages/api/$1"
+      }
+    ]
+  }
