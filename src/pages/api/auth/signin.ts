@@ -64,5 +64,5 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
     }
 
     logger.info("Redirecting to /dashboard")
-    return redirect("/dashboard")
+    return redirect("/")
 }

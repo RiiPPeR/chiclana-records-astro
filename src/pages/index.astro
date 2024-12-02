@@ -69,5 +69,21 @@ const isLoggedIn = cookies.get("sb-access-token") && cookies.get("sb-refresh-tok
                 <p class="text-gray-300">Conecta con otros coleccionistas</p>
             </div>
         </div>
+        <div class="mt-8 bg-black/30 backdrop-blur-md p-6 rounded-lg text-center max-w-7xl">
+            <h3 class="text-yellow-500 text-xl font-semibold mb-2">Versión Beta</h3>
+            <p class="text-gray-300 text-wrap">
+                Este proyecto está actualmente en fase beta. Las unicas funciones publicadas son la creación de una cuenta, el inicio de sesión, la busqueda de discos y añadir estos a tu colección. 
+                Puedes probar la aplicación usando un usuario de prueba, por si no quieres poner tus datos:
+            </p>
+            <div class="mt-2 p-3 bg-yellow-500/20 rounded-md inline-block">
+                <p class="text-gray-300">
+                    Email: <span class="text-blue-400">usuario@usuario.com</span><br/>
+                    Contraseña: <span class="text-blue-400">usuario</span>
+                </p>
+            </div>
+            <p class="mt-2 text-gray-300">
+                Aunque si quieres puedes crear tu cuenta, no hace falta poner un correo real y la contraseña queda encriptada gracias al modelo de autenticación de <a class="text-blue-300" href="https://supabase.com/">supabase</a>
+            </p>
+        </div>
     </div>
 </Layout>

@@ -104,6 +104,7 @@ if (Astro.request.method === 'POST') {
                         type="text" 
                         name="query" 
                         placeholder="Buscar un disco..." 
+                        value={urlQuery || ''}
                         class="flex-1 p-3 bg-black/40 backdrop-blur-md text-white rounded-lg border border-gray-600 focus:border-yellow-500 focus:outline-none xl:mr-10 mb-5 xl:mb-0"
                         required
                     />

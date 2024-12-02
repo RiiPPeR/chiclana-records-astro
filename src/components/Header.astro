@@ -4,6 +4,7 @@ import { Image } from 'astro:assets'
 import logo from '../assets/logo.png'
 import type { User } from '../lib/models/types/types' 
 import OrbButton from './OrbButton.astro'
+import betaSvg from '../assets/beta-svgrepo-com.svg'
 
 const accessToken = cookies.get("sb-access-token")
 const refreshToken = cookies.get("sb-refresh-token")
@@ -24,7 +25,17 @@ const user: User | null = userCookie ? JSON.parse(userCookie.value) : null
                 height={56}
                 quality={80}
             />
-            <p class="mr-10 text-3xl text-yellow-500 self-center">Chiclana Records</p>
+            <span class="text-3xl text-yellow-500 self-center flex flex-row">
+                <p class="self-center">Chiclana Records</p>
+                <Image 
+                    src={betaSvg} 
+                    alt="Beta" 
+                    class="h-14 ml-2 rotate-[30deg]"
+                    width={56} 
+                    height={56}
+                    quality={80}
+                />
+            </span>
         </a>
         <ul class="flex flex-row space-x-10">
             {isLoggedIn ? (
