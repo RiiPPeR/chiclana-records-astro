@@ -1,32 +1,42 @@
 ---
 const { cookies, redirect } = Astro
+import { Image } from 'astro:assets'
 import logo from '../assets/logo.png'
+import type { User } from '../lib/models/types/types' 
+import OrbButton from './OrbButton.astro'
 
 const accessToken = cookies.get("sb-access-token")
 const refreshToken = cookies.get("sb-refresh-token")
+const userCookie = cookies.get("user")
 
 const isLoggedIn = accessToken && refreshToken
+const user: User | null = userCookie ? JSON.parse(userCookie.value) : null
 ---
+
 <header class="h-[10%] mb-10 flex justify-center">
-    <nav class="flex flex-row items-center bg-black bg-transparent backdrop-blur-md bg-opacity-30 h-20 w-auto mt-6 p-7 rounded-lg shadow-xl">
-        <img src={logo.src} alt="Logo de la pagina." class="h-14 mr-5">
-        <p class="mr-10 text-3xl text-yellow-500">Chiclana records</p>
+    <nav class="flex flex-row items-center bg-black/40 backdrop-blur-md h-20 w-auto mt-6 p-7 rounded-lg shadow-xl">
+        <a href="/" class="flex flex-row">
+            <Image 
+                src={logo} 
+                alt="Logo de la pagina" 
+                class="h-14 mr-5"
+                width={56} 
+                height={56}
+                quality={80}
+            />
+            <p class="mr-10 text-3xl text-yellow-500 self-center">Chiclana Records</p>
+        </a>
         <ul class="flex flex-row space-x-10">
-            <li>
-                <a href="/">Inicio</a>
-            </li>
             {isLoggedIn ? (
                 <li>
-                    <a href="/dashboard">Mi cuenta</a>
+                    <a href="/api/auth/signout">
+                        <OrbButton text="Cerrar sesion" primaryColor="#22c55e" secondaryColor="#ef4444" />
+                    </a>
+
                 </li>
+
             ) : (
                 <>
-                    <li>
-                        <a href="/signin">Iniciar sesion</a>
-                    </li>
-                    <li>
-                        <a href="/register">Registrarse</a>
-                    </li>
                 </>
             )}
         </ul>

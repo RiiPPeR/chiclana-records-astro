@@ -1,0 +1,32 @@
+import type { APIRoute } from 'astro'
+import { RecordService } from '../../../lib/models/record'
+import type { User } from '../../../lib/models/types/types'
+import { logger } from "../logger"
+
+export const POST: APIRoute = async ({ request, cookies, redirect }) => {
+    logger.info('Received request to remove record')
+    
+    const user: User = cookies.get("user") ? JSON.parse(cookies.get("user")!.value) : null
+    logger.info('User:', user)
+
+    if (!user) {
+        logger.info('No user found, redirecting to /signin')
+        return redirect('/signin')
+    }
+
+    const formData = await request.formData()
+    const discogsId = Number(formData.get('discogs_id'))
+    logger.info('Discogs ID:', discogsId)
+
+    const recordService = new RecordService()
+    const result = await recordService.deleteRecordFromCollection(user.id, discogsId)
+    logger.info('Delete result:', result)
+
+    if (!result.success) {
+        logger.error('Error deleting record:', result.error)
+        return new Response(JSON.stringify({ error: result.error }), { status: 400 })
+    }
+
+    logger.info('Record deleted successfully, redirecting to /dashboard')
+    return redirect('/dashboard')
+}

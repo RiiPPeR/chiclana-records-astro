@@ -1,5 +1,6 @@
-import type { Record } from './types/types';
-import { supabase } from '../supabase';
+import type { Record } from './types/types'
+import { supabase } from '../supabase'
+import { logger } from '../../pages/api/logger'
 
 export class RecordService {
     private supabase = supabase;
@@ -99,15 +100,15 @@ export class RecordService {
         catalogNumber: string
     ): Promise<{ success: boolean; error?: string }> {
         try {
-            // Check if record exists
+            logger.info('Checking if record exists:', discogsId);
             const { data: existingRecord } = await this.supabase
                 .from('records')
                 .select('*')
                 .eq('discogs_id', discogsId)
                 .single();
 
-            // Add record if it doesn't exist
             if (!existingRecord) {
+                logger.info('Record does not exist, adding new record:', discogsId);
                 await this.supabase.from('records').insert({
                     discogs_id: discogsId,
                     title,
@@ -116,11 +117,13 @@ export class RecordService {
                     country,
                     year,
                     label,
-                    catno: catalogNumber // Add the artist property
+                    catno: catalogNumber
                 });
+            } else {
+                logger.info('Record already exists:', discogsId);
             }
 
-            // Check if user already has the record
+            logger.info('Checking if user already has the record:', { userId, discogsId });
             const { data: existingUserRecord } = await this.supabase
                 .from('user_records')
                 .select('*')
@@ -129,10 +132,11 @@ export class RecordService {
                 .single();
 
             if (existingUserRecord) {
+                logger.info('User already has the record:', { userId, discogsId });
                 return { success: false, error: 'Ya has añadido ese disco.' };
             }
 
-            // Add user record
+            logger.info('Adding record to user collection:', { userId, discogsId });
             await this.supabase.from('user_records').insert({
                 id: crypto.randomUUID(),
                 user_id: userId,
@@ -140,8 +144,10 @@ export class RecordService {
                 added_at: new Date().toISOString()
             });
 
+            logger.info('Record successfully added to user collection:', { userId, discogsId });
             return { success: true };
         } catch (error) {
+            logger.error('Error adding record to collection:', error);
             return { success: false, error: (error as Error).message };
         }
     }

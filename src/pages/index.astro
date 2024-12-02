@@ -1,14 +1,73 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
+import OrbButton from '../components/OrbButton.astro';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const { cookies } = Astro;
+const isLoggedIn = cookies.get("sb-access-token") && cookies.get("sb-refresh-token");
 ---
 
-<Layout title="Pagina principal">
-	<h1>Bienvenido a chiclana records</h1>
-	<p>Iniciar sesion <a href="/signin">Iniciar sesion</a></p>
-	<p>Registrarse <a href="/register">Registrarse</a></p>
-	<p>Dashboard <a href="/dashboard">Dashboard</a></p>
+<Layout title="Chiclana Records">
+    <div class="flex flex-col items-center justify-center px-4">
+        <div class="text-center mb-12 relative">
+            <div class="absolute w-32 h-32 bg-yellow-500 rounded-full -z-10 blur-2xl opacity-30 -top-10 -left-10"></div>
+            <div class="absolute w-32 h-32 bg-purple-500 rounded-full -z-10 blur-2xl opacity-30 -bottom-10 -right-10"></div>
+            
+            <h1 class="text-5xl font-bold text-yellow-500 mb-4">Chiclana Records</h1>
+            <p class="text-xl text-gray-300 mb-8 max-w-2xl">
+                Tu colección de vinilos digital. Guarda, organiza y comparte tu música favorita en un solo lugar.
+            </p>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-6 items-center justify-center bg-black/40 backdrop-blur-md p-8 rounded-xl shadow-2xl">
+            {isLoggedIn ? (
+                <a href="/dashboard">
+                    <OrbButton 
+                        text="Ir a mi colección" 
+                        primaryColor="#22c55e" 
+                        secondaryColor="#3b82f6"
+                    />
+                </a>
+
+				<a href="/recordsearch">
+					<OrbButton 
+						text="Buscar discos" 
+						primaryColor="#ef4444" 
+						secondaryColor="#8b5cf6"
+                    />
+                </a>
+            ) : (
+                <>
+                    <a href="/signin">
+                        <OrbButton 
+                            text="Iniciar sesión" 
+                            primaryColor="#ef4444" 
+                            secondaryColor="#22c55e"
+                        />
+                    </a>
+                    <a href="/register">
+                        <OrbButton 
+                            text="Registrarse" 
+                            primaryColor="#3b82f6" 
+                            secondaryColor="#f59e0b"
+                        />
+                    </a>
+                </>
+            )}
+        </div>
+
+        <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+            <div class="bg-black/30 backdrop-blur-md p-6 rounded-lg">
+                <h3 class="text-yellow-500 text-xl font-semibold mb-2">Colecciona</h3>
+                <p class="text-gray-300">Guarda todos tus vinilos favoritos en un solo lugar</p>
+            </div>
+            <div class="bg-black/30 backdrop-blur-md p-6 rounded-lg">
+                <h3 class="text-yellow-500 text-xl font-semibold mb-2">Organiza</h3>
+                <p class="text-gray-300">Mantén tu colección ordenada y accesible</p>
+            </div>
+            <div class="bg-black/30 backdrop-blur-md p-6 rounded-lg">
+                <h3 class="text-yellow-500 text-xl font-semibold mb-2">Comparte</h3>
+                <p class="text-gray-300">Conecta con otros coleccionistas</p>
+            </div>
+        </div>
+    </div>
 </Layout>

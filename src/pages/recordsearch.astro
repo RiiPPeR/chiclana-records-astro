@@ -1,0 +1,192 @@
+---
+import Layout from '../layouts/Layout.astro'
+import OrbButton from '../components/OrbButton.astro'
+import type { User, Record } from '../lib/models/types/types'
+import { RecordService } from '../lib/models/record'
+import { logger } from './api/logger'
+
+const { cookies } = Astro
+
+const accessToken = cookies.get("sb-access-token")
+const refreshToken = cookies.get("sb-refresh-token")
+const userCookie = cookies.get("user")
+
+if (!accessToken || !refreshToken) {
+    return redirect("/signin")
+}
+
+const user: User = userCookie ? JSON.parse(userCookie.value) : null
+if (!user) {
+    cookies.delete("sb-access-token", { path: "/" })
+    cookies.delete("sb-refresh-token", { path: "/" })
+    return redirect("/signin")
+}
+
+interface DiscogsRecord {
+    thumb: string
+    title: string
+    year: string
+    country: string
+    label: string[]
+    catno: string
+    artist: string
+    id: number
+    isInCollection: boolean
+}
+
+let searchResults: DiscogsRecord[] = []
+let error = ''
+
+const recordService = new RecordService()
+
+const records: Record[] = user.id ? await recordService.getUserRecords(user.id) : []
+
+const urlQuery = Astro.url.searchParams.get('q')
+
+if (urlQuery) {
+    try {
+        const response = await fetch(`https://api.discogs.com/database/search?q=${urlQuery}&type=release&format=vinyl`, {
+            headers: {
+                'Authorization': `Discogs token=${import.meta.env.DISCOGS_KEY}`,
+                'User-Agent': 'ChiclanaRecords/1.0'
+            }
+        })
+
+        const responseData = await response.json()
+        searchResults = responseData.results.map((record: any) => ({
+            thumb: record.thumb || '../assets/logo.png',
+            title: record.title,
+            year: record.year,
+            country: record.country || 'Desconocido',
+            label: record.label || ['Desconocido'],
+            catno: record.catno || 'Desconocido',
+            artist: record.title.split(' - ')[0],
+            id: record.id,
+            isInCollection: false
+        }))
+        logger.info('Search results fetched successfully', { query: urlQuery, results: searchResults.length })
+    } catch (e) {
+        error = 'Error buscando los discos'
+        logger.error('Error fetching search results', e)
+    }
+}
+
+if (Astro.request.method === 'POST') {
+    try {
+        const formData = await Astro.request.formData()
+        const query = formData.get('query')
+        
+        logger.info('Form submitted', { query })
+        return Astro.redirect(`/recordsearch?q=${encodeURIComponent(query as string)}`)
+    } catch (e) {
+        error = 'Error buscando los discos'
+        logger.error('Error processing form submission', e)
+    }
+}
+---
+
+<Layout title="Buscar discos">
+    <div class="flex flex-col items-center justify-center px-4">
+        <div class="text-center mb-12 relative">
+            <div class="absolute w-32 h-32 bg-yellow-500 rounded-full -z-10 blur-2xl opacity-30 -top-10 -left-10"></div>
+            <div class="absolute w-32 h-32 bg-purple-500 rounded-full -z-10 blur-2xl opacity-30 -bottom-10 -right-10"></div>
+            
+            <h1 class="text-5xl font-bold text-yellow-500 mb-4">Buscar disco</h1>
+            <p class="text-xl text-gray-300 mb-8 max-w-2xl">
+                Encuentra y busca nuevos vinilos para tu colección
+            </p>
+        </div>
+
+        <div class="w-full">
+            <form method="POST" class="mb-8">
+                <div class="flex gap-4">
+                    <input 
+                        type="text" 
+                        name="query" 
+                        placeholder="Buscar un disco..." 
+                        class="flex-1 p-3 bg-black/40 backdrop-blur-md text-white rounded-lg border border-gray-600 focus:border-yellow-500 focus:outline-none"
+                        required
+                    />
+                    <OrbButton 
+                        text="Buscar" 
+                        primaryColor="#3b82f6" 
+                        secondaryColor="#22c55e"
+                    />
+                </div>
+            </form>
+
+            {error && <p class="text-red-500 mb-4 text-center">{error}</p>}
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 w-auto">
+                {searchResults.map((record) => (
+
+                    <div class="flex-[1_1_500px] flex flex-col max-w-md relative overflow-hidden z-10 bg-black/40 backdrop-blur-md p-4 rounded-xl shadow-black shadow-2xl transition-all duration-300 hover:scale-105">
+        
+                        {(() => {
+                            const match = records.find((r) => r.discogs_id === record.id)
+                            if (match) {
+                                record.isInCollection = true
+                                return null
+                            }
+                            record.isInCollection = false
+                            return null
+                        })()}
+
+                        {record.isInCollection ? (
+                            <div class="absolute w-36 h-36 bg-yellow-500 bg-opacity-50 rounded-full -z-10 blur-2xl top-20 right-0" />
+                        ) : (
+                            <div class="absolute w-36 h-36 bg-transparent bg-opacity-50 rounded-full -z-10 blur-2xl top-20 right-0" />
+                        )}
+                    
+                        <div class="flex flex-row">
+                            <img 
+                            src={record.thumb} 
+                            alt={record.title}
+                            class="w-32 h-32 object-cover mb-4 rounded-lg"
+                            />
+                            <div class="flex flex-col justify-between text-gray-400 text-sm mb-4">
+                                <span>{record.year}</span>
+                                <span>{record.country}</span>
+                                <span>{record.label[0]}</span>
+                                <span>{record.catno}</span>
+                            </div>
+                        </div>
+
+                        <div class="p-4">
+                            <h2 class="font-bold text-xl text-yellow-500 mb-2">{record.artist}</h2>
+                            <p class="text-gray-300 mb-2">{record.title.split(' - ')[1]}</p>
+
+                                {record.isInCollection ? (
+                                    <form action="/api/records/remove" method="POST">
+                                        <input type="hidden" name="discogs_id" value={record.id} />
+                                        <OrbButton 
+                                            text="Eliminar" 
+                                            primaryColor="#facc15" 
+                                            secondaryColor="#ef4444"
+                                        />
+                                    </form>
+                                ) : (
+                                    <form action="/api/records/add" method="POST">
+                                                <input type="hidden" name="discogs_id" value={record.id} />
+                                                <input type="hidden" name="title" value={record.title} />
+                                                <input type="hidden" name="artist" value={record.artist} />
+                                                <input type="hidden" name="image_url" value={record.thumb} />
+                                                <input type="hidden" name="country" value={record.country} />
+                                                <input type="hidden" name="year" value={record.year} />
+                                                <input type="hidden" name="label" value={record.label[0]} />
+                                                <input type="hidden" name="catno" value={record.catno} />
+                                                <input type="hidden" name="searchQuery" value={urlQuery || ''} />
+                                        <OrbButton 
+                                            text="Añadir" 
+                                            primaryColor="#ef4444" 
+                                            secondaryColor="#22c55e"
+                                        />
+                                    </form>
+                                )}
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    </div>
+</Layout>

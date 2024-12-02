@@ -1,4 +1,5 @@
 ---
+import RecordCard from "../components/RecordCard.astro";
 import Layout from "../layouts/Layout.astro"
 import { RecordService } from "../lib/models/record"
 import type { User } from "../lib/models/types/types"
@@ -42,32 +43,45 @@ try {
 }
 const recordService = new RecordService();
 
-const email = session.data.user?.email
 const userId = session.data.user?.id;
 
 const records: Record[] = userId ? await recordService.getUserRecords(userId) : [];
 ---
-<Layout title="Dashboard">
+<Layout title="Colección">
     <div id="container">
-        <div class="">
-            <h1>Bienvenido {email}</h1>
-            <p>Tu nombre de usuario es: {user.username}</p>
-            <h2>Tus discos</h2>
-            <div class="flex flex-row flex-wrap gap-10 mr-24 ml-24">
+        <div class="flex flex-col">
+            <section class="flex flex-row text-center mb-12 p-6 bg-black/30 backdrop-blur-sm rounded-xl max-w-3xl mx-auto">
+                <div class="self-center">
+                    <h1 class="text-4xl font-bold text-yellow-500 mb-4">Tu coleccón de discos</h1>
+                    <p class="text-gray-300 mb-6">
+                        Aquí puedes ver todos los discos que has añadido a tu colección
+                    </p>
+                </div>
+
+                <div class="hover:-translate-y-2 group bg-transparent duration-500 w-44 h-44 flex text-neutral-600 flex-col justify-center items-center relative rounded-xl overflow-hidden">
+                    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" class="absolute blur z-10 fill-yellow-500 duration-500 group-hover:blur-none group-hover:scale-105">
+                        <path transform="translate(100 100)" d="M39.5,-49.6C54.8,-43.2,73.2,-36.5,78.2,-24.6C83.2,-12.7,74.8,4.4,69,22.5C63.3,40.6,60.2,59.6,49.1,64.8C38.1,70,19,61.5,0.6,60.7C-17.9,59.9,-35.9,67,-47.2,61.9C-58.6,56.7,-63.4,39.5,-70,22.1C-76.6,4.7,-84.9,-12.8,-81.9,-28.1C-79,-43.3,-64.6,-56.3,-49.1,-62.5C-33.6,-68.8,-16.8,-68.3,-2.3,-65.1C12.1,-61.9,24.2,-55.9,39.5,-49.6Z"></path>
+                    </svg>
+                    <div class="z-20 flex flex-col justify-center items-center">
+                        <span class="font-bold text-6xl ml-2">{records.length}</span>
+                        <p class="font-bold">Discos</p>
+                    </div>
+                </div>
+            </section>
+
+            <div class="mb-10 w-96 self-center">
+                <label class="block text-2xl font-medium text-yellow-500" for="filter"
+                >Buscar</label
+                >
+                <input
+                    class="mt-1 p-2 w-full bg-white bg-transparent backdrop-blur-md bg-opacity-10 rounded-md text-white shadow-inner shadow-black"
+                    name="filter" id="filter" type="text"
+                />
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 mx-24">
                 {records.map((record: Record) => (
-                    <div class="flex-[1_1_500px] flex flex-row max-w-md mx-auto relative overflow-hidden z-10 bg-black bg-transparent backdrop-blur-md bg-opacity-30 p-4 rounded-lg shadow-xl transition-transform duration-300 hover:scale-105 cursor-pointer">
-                        <div class="absolute w-24 h-24 bg-yellow-500 bg-opacity-50 rounded-full -z-10 blur-2xl top-20 right-0" />
-                        <img src={record.image_url} alt="Imagel del disco" class="h-24 w-24" />
-                        <div class="p-3 w-2/5">
-                            <p>{record.artist}</p>
-                            <p>{record.title}</p>
-                            <p>{record.year}</p>
-                        </div>
-                        <div class="p-3 w-2/5">
-                            <p>{record.label}</p>
-                            <p>{record.catno}</p>
-                            <p>{record.country}</p>
-                        </div>
+                    <div class="record-wrapper transition-all duration-500 ease-in-out hover:scale-105 opacity-100 scale-100">
+                        <RecordCard record={record} />
                     </div>
                 ))}
             </div>
@@ -76,4 +90,54 @@ const records: Record[] = userId ? await recordService.getUserRecords(userId) : 
             </form>
         </div>
     </div>
+
+    <script>
+        function initializeFilter() {
+            const filterInput = document.getElementById('filter') as HTMLInputElement
+            if (!filterInput) {
+                return
+            }
+        
+            const clone = filterInput.cloneNode(true)
+            filterInput.parentNode?.replaceChild(clone, filterInput)
+            
+            clone.addEventListener('input', (e) => {
+                const target = e.target as HTMLInputElement
+                const searchTerm = target.value.toLowerCase()
+                const recordWrappers = document.querySelectorAll('.record-wrapper')
+                
+                recordWrappers.forEach(wrapper => {
+                    const htmlWrapper = wrapper as HTMLElement
+                    const card = htmlWrapper.querySelector('.record-card') as HTMLElement
+                    const artist = card.querySelector('p')?.textContent?.toLowerCase() ?? ''
+                    const title = card.querySelector('p:nth-child(2)')?.textContent?.toLowerCase().replace('- ', '') ?? ''
+                
+                    if (artist.includes(searchTerm) || title.includes(searchTerm)) {
+                        htmlWrapper.style.display = 'block'
+                        void htmlWrapper.offsetHeight
+                        htmlWrapper.style.opacity = '1'
+                    } else {
+                        htmlWrapper.style.opacity = '0'
+                        setTimeout(() => {
+                            if (htmlWrapper.style.opacity === '0') {
+                            htmlWrapper.style.display = 'none'
+                            }
+                        }, 500)
+                    }
+                })
+            })
+        }
+        
+        /* 
+            astro:page-load
+            An event that fires at the end of page navigation, after the new page is visible to the user and blocking styles and scripts are loaded. You can listen to this event on the document.
+
+            The <ViewTransitions /> component fires this event both on initial page navigation for a pre-rendered page and on any subsequent navigation, either forwards or backwards.
+
+            You can use this event to run code on every page navigation, for example to set up event listeners that would otherwise be lost during navigation.
+        */
+        document.addEventListener('astro:page-load', () => {
+            initializeFilter();
+        });
+    </script>
 </Layout>
