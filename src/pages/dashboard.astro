@@ -78,7 +78,7 @@ const records: Record[] = userId ? await recordService.getUserRecords(userId) : 
                     name="filter" id="filter" type="text"
                 />
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 mx-24">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:mx-24">
                 {records.map((record: Record) => (
                     <div class="record-wrapper transition-all duration-500 ease-in-out hover:scale-105 opacity-100 scale-100">
                         <RecordCard record={record} />

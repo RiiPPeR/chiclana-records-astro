@@ -14,8 +14,8 @@ const isLoggedIn = accessToken && refreshToken
 const user: User | null = userCookie ? JSON.parse(userCookie.value) : null
 ---
 
-<header class="h-[10%] mb-10 flex justify-center">
-    <nav class="flex flex-row items-center bg-black/40 backdrop-blur-md h-20 w-auto mt-6 p-7 rounded-lg shadow-xl">
+<header class="h-[10%] mb-36 mr-10 ml-10 mt-0 md:m-0 md:mb-10 flex justify-center">
+    <nav class=`flex flex-col md:flex-row items-center bg-black/40 backdrop-blur-md ${isLoggedIn ? 'h-48' : 'h-28 w-max'} md:h-20 mt-6 p-7 rounded-lg shadow-xl`>
         <a href="/" class="flex flex-row">
             <Image 
                 src={logo} 
@@ -37,11 +37,11 @@ const user: User | null = userCookie ? JSON.parse(userCookie.value) : null
                 />
             </span>
         </a>
-        <ul class="flex flex-row space-x-10">
+        <ul class="flex flex-row space-x-10 mt-3 md:m-0">
             {isLoggedIn ? (
                 <li>
-                    <a href="/api/auth/signout">
-                        <OrbButton text="Cerrar sesion" primaryColor="#22c55e" secondaryColor="#ef4444" />
+                    <a href="/api/auth/signout" class="md:ml-6">
+                        <OrbButton text="Cerrar sesion" primaryColor="#22c55e" secondaryColor="#ef4444"/>
                     </a>
 
                 </li>

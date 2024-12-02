@@ -30,12 +30,18 @@ const { title } = Astro.props
 html {
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
-    font: 'Poppins', sans-serif;
+    font-family: 'Poppins', sans-serif;
+    width: 100%;
+    overflow-x: hidden;
 }
 
 body {
     background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('../assets/bg.jpg');
     background-size: cover;
     background-attachment: fixed;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
 }
 </style>
