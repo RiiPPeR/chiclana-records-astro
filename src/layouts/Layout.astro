@@ -18,7 +18,7 @@ const { title } = Astro.props
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 	</head>
-	<body class="h-screen">
+	<body class="h-screen ml-4 sm:m-0">
 		<Header />
 		<main>
 			<slot />
@@ -27,12 +27,13 @@ const { title } = Astro.props
 </html>
 
 <style>
-html {
-    transform: translateZ(0);
-    -webkit-transform: translateZ(0);
-    font-family: 'Poppins', sans-serif;
-    width: 100%;
-    overflow-x: hidden;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+    -webkit-font-smoothing: antialiased;
+    backface-visibility: hidden;
 }
 
 body {
@@ -43,5 +44,18 @@ body {
     margin: 0;
     padding: 0;
     overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    will-change: transform;
+    transform: translateZ(0);
+    overscroll-behavior: none;
+}
+
+@layer utilities {
+  	.optimized-blur {
+  	  	@apply backdrop-blur-md;
+  	  	transform: translateZ(0);
+  	  	will-change: transform;
+  	}
 }
 </style>
