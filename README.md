@@ -2,10 +2,12 @@ TODO: README.md
 
 Chiclana Records version web usando la misma base de datos que en la version de escritorio.
 
-![image](https://github.com/user-attachments/assets/fef38205-1fa0-4c9a-a982-1b9918a8b2b6)
+https://chiclana-records-astro.vercel.app/
 
-![image](https://github.com/user-attachments/assets/c8d50857-ef7d-4d7b-b0ff-f5b2abdf0a2c)
+![image](https://github.com/user-attachments/assets/c337c5f5-28f7-425c-86da-1376a3bd1504)
 
-![image](https://github.com/user-attachments/assets/c536c4f0-6f66-42bd-9444-981d1eadf0a0)
+![image](https://github.com/user-attachments/assets/5fb75ef3-d64e-45f1-90e7-abb38876fcc1)
 
-![image](https://github.com/user-attachments/assets/e3d622c5-f225-4f3d-a156-626f88297c59)
+![image](https://github.com/user-attachments/assets/3a9e44b5-3f15-4344-ae57-f4a9ae04a182)
+
+![image](https://github.com/user-attachments/assets/b953bd45-fb5e-4817-8cf0-f09a46d7c3ad)
