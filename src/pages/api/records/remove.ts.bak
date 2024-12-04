@@ -27,6 +27,14 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
         return new Response(JSON.stringify({ error: result.error }), { status: 400 })
     }
 
-    logger.info('Record deleted successfully, redirecting to /dashboard')
-    return redirect('/dashboard')
+    logger.success('Record deleted successfully')
+
+    const searchQuery = formData.get('searchQuery') as string
+
+    logger.info('Search Query:', searchQuery);
+
+    const redirectUrl = `/recordsearch${searchQuery ? `?q=${encodeURIComponent(searchQuery)}` : ''}`
+    logger.info('Redirect URL:', redirectUrl);
+
+    return redirect(redirectUrl)
 }

@@ -1,10 +1,12 @@
 ---
-import RecordCard from "../components/RecordCard.astro";
+import { record } from "astro:schema";
+import RecordCardTsx from "../components/RecordCardTsx";
 import Layout from "../layouts/Layout.astro"
 import { RecordService } from "../lib/models/record"
 import type { User } from "../lib/models/types/types"
 import { supabase } from "../lib/supabase"
 import type { Record } from './../lib/models/types/types';
+import { logger } from "./api/logger";
 
 const { cookies, redirect } = Astro
 
@@ -46,6 +48,10 @@ const recordService = new RecordService();
 const userId = session.data.user?.id;
 
 const records: Record[] = userId ? await recordService.getUserRecords(userId) : [];
+
+records.forEach(record => {
+    logger.info('Record fetched', { record })
+});
 ---
 <Layout title="Colección">
     <div id="container">
@@ -78,10 +84,10 @@ const records: Record[] = userId ? await recordService.getUserRecords(userId) : 
                     name="filter" id="filter" type="text"
                 />
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:mx-24">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 lg:mx-24">
                 {records.map((record: Record) => (
-                    <div class="record-wrapper transition-all duration-500 ease-in-out hover:scale-105 opacity-100 scale-100">
-                        <RecordCard record={record} />
+                    <div class="record-wrapper transition-all duration-500 ease-in-out opacity-100">
+                        <RecordCardTsx client:load record={record} records={records} user_id={user.id} />
                     </div>
                 ))}
             </div>
@@ -106,8 +112,8 @@ const records: Record[] = userId ? await recordService.getUserRecords(userId) : 
                 recordWrappers.forEach(wrapper => {
                     const htmlWrapper = wrapper as HTMLElement
                     const card = htmlWrapper.querySelector('.record-card') as HTMLElement
-                    const artist = card.querySelector('p')?.textContent?.toLowerCase() ?? ''
-                    const title = card.querySelector('p:nth-child(2)')?.textContent?.toLowerCase().replace('- ', '') ?? ''
+                    const artist = card.querySelector('.artist')?.textContent?.toLowerCase() ?? ''
+                    const title = card.querySelector('.title')?.textContent?.toLowerCase().replace('- ', '') ?? ''
                 
                     if (artist.includes(searchTerm) || title.includes(searchTerm)) {
                         htmlWrapper.style.display = 'block'
@@ -134,7 +140,7 @@ const records: Record[] = userId ? await recordService.getUserRecords(userId) : 
             You can use this event to run code on every page navigation, for example to set up event listeners that would otherwise be lost during navigation.
         */
         document.addEventListener('astro:page-load', () => {
-            initializeFilter();
-        });
+            initializeFilter()
+        })
     </script>
 </Layout>

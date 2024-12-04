@@ -4,17 +4,21 @@ import OrbButton from '../components/OrbButton.astro'
 import type { User, Record } from '../lib/models/types/types'
 import { RecordService } from '../lib/models/record'
 import { logger } from './api/logger'
+import RecordCard from '../components/RecordCardTsx.tsx'
 
+// we get the cookies from Astro
 const { cookies } = Astro
 
 const accessToken = cookies.get("sb-access-token")
 const refreshToken = cookies.get("sb-refresh-token")
 const userCookie = cookies.get("user")
 
+// if the user is not logged in, we redirect to the signin page
 if (!accessToken || !refreshToken) {
     return redirect("/signin")
 }
 
+// we get the user from the cookie
 const user: User = userCookie ? JSON.parse(userCookie.value) : null
 if (!user) {
     cookies.delete("sb-access-token", { path: "/" })
@@ -22,27 +26,16 @@ if (!user) {
     return redirect("/signin")
 }
 
-interface DiscogsRecord {
-    thumb: string
-    title: string
-    year: string
-    country: string
-    label: string[]
-    catno: string
-    artist: string
-    id: number
-    isInCollection: boolean
-}
-
-let searchResults: DiscogsRecord[] = []
+let searchResults: Record[] = []
 let error = ''
 
 const recordService = new RecordService()
-
 const records: Record[] = user.id ? await recordService.getUserRecords(user.id) : []
 
+// we get the query from the URL
 const urlQuery = Astro.url.searchParams.get('q')
 
+// if there is a query, we fetch the search results
 if (urlQuery) {
     try {
         const response = await fetch(`https://api.discogs.com/database/search?q=${urlQuery}&type=release&format=vinyl`, {
@@ -53,17 +46,19 @@ if (urlQuery) {
         })
 
         const responseData = await response.json()
-        searchResults = responseData.results.map((record: any) => ({
-            thumb: record.thumb || '../assets/logo.png',
-            title: record.title,
-            year: record.year,
-            country: record.country || 'Desconocido',
-            label: record.label || ['Desconocido'],
-            catno: record.catno || 'Desconocido',
-            artist: record.title.split(' - ')[0],
-            id: record.id,
-            isInCollection: false
-        }))
+        
+        searchResults = responseData.results.map((record: any) => {
+            const [artist, title] = record.title.split(' - ');
+            return {
+                image_url: record.thumb || '../assets/logo.png',
+                title: title || record.title,
+                artist: artist,
+                year: record.year,
+                country: record.country || 'Desconocido',
+                label: record.label[0] || 'Desconocido',
+                catno: record.catno || 'Desconocido',
+                discogs_id: record.id,
+        }})
         logger.info('Search results fetched successfully', { query: urlQuery, results: searchResults.length })
     } catch (e) {
         error = 'Error buscando los discos'
@@ -118,71 +113,9 @@ if (Astro.request.method === 'POST') {
 
             {error && <p class="text-red-500 mb-4 text-center">{error}</p>}
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 w-auto">
                 {searchResults.map((record) => (
-                    <div class="w-3/4 flex flex-col max-w-md m-10 relative overflow-hidden z-10 bg-black/40 backdrop-blur-md p-4 rounded-xl shadow-black shadow-2xl transition-shadow duration-300 hover:shadow-none will-change-transform">
-                
-                        {(() => {
-                            const match = records.find((r) => r.discogs_id === record.id)
-                            if (match) {
-                                record.isInCollection = true
-                                return null
-                            }
-                            record.isInCollection = false
-                            return null
-                        })()}
-            
-                        {record.isInCollection ? (
-                            <div class="absolute w-36 h-36 bg-yellow-500 bg-opacity-50 rounded-full -z-10 blur-2xl top-20 right-0" />
-                        ) : (
-                            <div class="absolute w-36 h-36 bg-transparent bg-opacity-50 rounded-full -z-10 blur-2xl top-20 right-0" />
-                        )}
-                    
-                        <div class="flex flex-row">
-                            <img 
-                            src={record.thumb} 
-                            alt={record.title}
-                            class="w-32 h-32 object-cover mb-4 rounded-lg"
-                            />
-                            <div class="flex flex-col justify-center text-gray-300 text-base m-4">
-                                <p>{record.year}, {record.country}</p>
-                                <p>{record.label[0]} - {record.catno}</p>
-                            </div>
-                        </div>
-            
-                        <div class="p-4">
-                            <p class="font-bold text-2xl text-yellow-500 mb-2">{record.artist}</p>
-                            <p class="text-gray-300 mb-2">{record.title.split(' - ')[1]}</p>
-            
-                            {record.isInCollection ? (
-                                <form action="/api/records/remove" method="POST">
-                                    <input type="hidden" name="discogs_id" value={record.id} />
-                                    <OrbButton 
-                                        text="Eliminar" 
-                                        primaryColor="#facc15" 
-                                        secondaryColor="#ef4444"
-                                    />
-                                </form>
-                            ) : (
-                                <form action="/api/records/add" method="POST">
-                                    <input type="hidden" name="discogs_id" value={record.id} />
-                                    <input type="hidden" name="title" value={record.title} />
-                                    <input type="hidden" name="artist" value={record.artist} />
-                                    <input type="hidden" name="image_url" value={record.thumb} />
-                                    <input type="hidden" name="country" value={record.country} />
-                                    <input type="hidden" name="year" value={record.year} />
-                                    <input type="hidden" name="label" value={record.label[0]} />
-                                    <input type="hidden" name="catno" value={record.catno} />
-                                    <input type="hidden" name="searchQuery" value={urlQuery || ''} />
-                                    <OrbButton 
-                                        text="Añadir" 
-                                        primaryColor="#ef4444"
-                                        secondaryColor="#22c55e"
-                                    />
-                                </form>
-                            )}
-                        </div>
-                    </div>
+                    <RecordCard client:load record={record} records={records} user_id={user.id} />
                 ))}
             </div>
         </div>
