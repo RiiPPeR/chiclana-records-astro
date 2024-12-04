@@ -66,6 +66,8 @@ if (urlQuery) {
     }
 }
 
+// actually, when we do the post, the page is reloading but thanks to astros view transitions
+// its not noticeable
 if (Astro.request.method === 'POST') {
     try {
         const formData = await Astro.request.formData()
@@ -83,10 +85,10 @@ if (Astro.request.method === 'POST') {
 <Layout title="Buscar discos">
     <div class="flex flex-col items-center justify-center px-4">
         <div class="text-center mb-12 relative">
-            <div class="absolute w-32 h-32 bg-yellow-500 rounded-full -z-10 blur-2xl opacity-30 -top-10 -left-10"></div>
+            <div class="absolute w-32 h-32 bg-amber-500 rounded-full -z-10 blur-2xl opacity-30 -top-10 -left-10"></div>
             <div class="absolute w-32 h-32 bg-purple-500 rounded-full -z-10 blur-2xl opacity-30 -bottom-10 -right-10"></div>
             
-            <h1 class="text-5xl font-bold text-yellow-500 mb-4">Buscar disco</h1>
+            <h1 class="text-5xl font-bold text-amber-500 mb-4">Buscar disco</h1>
             <p class="text-xl text-gray-300 mb-8 max-w-2xl">
                 Encuentra y busca nuevos vinilos para tu colección
             </p>
@@ -99,8 +101,7 @@ if (Astro.request.method === 'POST') {
                         type="text" 
                         name="query" 
                         placeholder="Buscar un disco..." 
-                        value={urlQuery || ''}
-                        class="flex-1 p-3 bg-black/40 backdrop-blur-md text-white rounded-lg border border-gray-600 focus:border-yellow-500 focus:outline-none xl:mr-10 mb-5 xl:mb-0"
+                        class="flex-1 p-3 bg-black/40 backdrop-blur-md text-white rounded-lg border border-gray-600 focus:border-amber-500 focus:outline-none xl:mr-10 mb-5 xl:mb-0"
                         required
                     />
                     <OrbButton 
@@ -115,7 +116,7 @@ if (Astro.request.method === 'POST') {
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 w-auto">
                 {searchResults.map((record) => (
-                    <RecordCard client:load record={record} records={records} user_id={user.id} />
+                    <RecordCard client:load record={record} records={records} user_id={user.id}/>
                 ))}
             </div>
         </div>

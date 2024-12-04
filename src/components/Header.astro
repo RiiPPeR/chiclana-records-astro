@@ -5,13 +5,13 @@ import logo from '../assets/logo.png'
 import type { User } from '../lib/models/types/types' 
 import OrbButton from './OrbButton.astro'
 import betaSvg from '../assets/beta-svgrepo-com.svg'
+import { DropDown } from './DropDown'
 
 const accessToken = cookies.get("sb-access-token")
 const refreshToken = cookies.get("sb-refresh-token")
 const userCookie = cookies.get("user")
 
-const isLoggedIn = accessToken && refreshToken
-const user: User | null = userCookie ? JSON.parse(userCookie.value) : null
+const isLoggedIn: boolean = accessToken !== undefined && refreshToken !== undefined
 ---
 
 <header class="h-[10%] mb-36 mr-10 ml-10 mt-0 md:m-0 md:mb-10 flex justify-center">
@@ -25,7 +25,7 @@ const user: User | null = userCookie ? JSON.parse(userCookie.value) : null
                 height={56}
                 quality={80}
             />
-            <span class="text-3xl text-yellow-500 self-center flex flex-row">
+            <span class="text-3xl text-amber-500 self-center flex flex-row">
                 <p class="self-center">Chiclana Records</p>
                 <Image 
                     src={betaSvg} 
@@ -40,10 +40,16 @@ const user: User | null = userCookie ? JSON.parse(userCookie.value) : null
         <ul class="flex flex-row space-x-10 mt-3 md:m-0">
             {isLoggedIn ? (
                 <li>
-                    <a href="/api/auth/signout" class="md:ml-6">
+                    <a href="/api/auth/signout" class="md:ml-6" data-astro-prefetch="tap">
                         <OrbButton text="Cerrar sesion" primaryColor="#22c55e" secondaryColor="#ef4444"/>
+                        <button
+                            aria-label="Cerrar sesión"
+                            class="px-8 py-2 text-white font-bold text-lg rounded-full shadow-lg transition-transform transform bg-transparent border-2 border-white hover:scale-105 hover:border-red-600 hover:shadow-red-500/50 hover:shadow-2xl focus:outline-none"
+                            id="startButton"
+                        >
+                            Cerrar sesión
+                        </button>
                     </a>
-
                 </li>
 
             ) : (
@@ -51,5 +57,7 @@ const user: User | null = userCookie ? JSON.parse(userCookie.value) : null
                 </>
             )}
         </ul>
+
+        <DropDown client:load isLoggedIn={isLoggedIn}/>
     </nav>
 </header>

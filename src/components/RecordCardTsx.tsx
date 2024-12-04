@@ -37,7 +37,7 @@ export default function RecordCard({
     return (
         <div className="w-3/4 flex flex-col max-w-md m-10 relative overflow-hidden z-10 bg-black/40 backdrop-blur-md p-4 rounded-xl shadow-black shadow-2xl  duration-300 hover:shadow-none hover:translate-y-1 transition-all will-change-transform record-card">
             {isInCollection ? (
-                <div className="absolute w-36 h-36 bg-yellow-500 bg-opacity-50 rounded-full -z-10 blur-2xl top-20 right-0 transition-all duration-1000 ease-out" />
+                <div className="absolute w-36 h-36 bg-amber-500 bg-opacity-50 rounded-full -z-10 blur-2xl top-20 right-0 transition-all duration-1000 ease-out" />
             ) : (
                 <div className="absolute w-36 h-36 bg-transparent bg-opacity-50 rounded-full -z-10 blur-2xl top-20 right-0 transition-all duration-1000 ease-out" />
             )}
@@ -59,7 +59,7 @@ export default function RecordCard({
             </div>
 
             <div className="p-4">
-                <p className="font-bold text-2xl text-yellow-500 mb-2 artist">
+                <p className="font-bold text-2xl text-amber-500 mb-2 artist">
                     {record.artist}
                 </p>
                 <p className="text-gray-300 mb-2 title">{record.title}</p>
@@ -69,19 +69,19 @@ export default function RecordCard({
                 {isInCollection ? (
                     <OrbButtonTsx
                         text="Eliminar"
-                        primaryColor="#facc15"
+                        primaryColor="#33fff"
                         secondaryColor="#ef4444"
                         onClick={handleToggleCollection}
                     />
                 ) : (
                     <OrbButtonTsx
                         text="Añadir"
-                        primaryColor="#ef4444"
+                        primaryColor="#33fff"
                         secondaryColor="#22c55e"
                         onClick={handleToggleCollection}
                     />
                 )}
             </div>
         </div>
-    );
+    )
 }

@@ -21,7 +21,7 @@ export function OrbButtonTsx({ text, primaryColor, secondaryColor, onClick }: Or
                 after:duration-500 duration-500 
                 before:duration-500 hover:duration-500 
                 underline underline-offset-2 
-                hover:after:-right-8 hover:before:right-12 
+                hover:after:-right-24 hover:before:right-12 
                 hover:before:-bottom-8 hover:before:blur 
                 hover:underline hover:underline-offset-4 
                 origin-left hover:decoration-2 
